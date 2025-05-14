@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 (http://www.altova.com) by  () -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://3005_kdp.reports.egp.gbdul.tamur.kz" targetNamespace="http://3005_kdp.reports.egp.gbdul.tamur.kz" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="request" type="tns:RequestMessage">
+		<xs:annotation>
+			<xs:documentation>30.05 - Справка о всех регистрационных действиях юридического лица, филиала или представительства</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="BaseRequestMessage">
+		<xs:annotation>
+			<xs:documentation>Формат служебных данных запроса</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="requestNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Номер запроса на портале</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="declarantId" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ИИН/БИН заявителя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requestDate" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата запроса, в системе иницировавшей запрос через ПЭП</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requestSystemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор системы запросившей услугу через ПЭП</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestMessage">
+		<xs:annotation>
+			<xs:documentation>Формат бизнес данных запроса</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BaseRequestMessage">
+				<xs:sequence>
+					<xs:element name="businessData" type="tns:RequestType">
+						<xs:annotation>
+							<xs:documentation>Бизнес данные запроса</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="RequestType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий бизнес данные запроса</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BIN" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>БИН юрлица, филиала или представительства</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Requestor" type="tns:RequestorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Заявитель (используется для отображения в выходном документе на ПЭП)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InfoAbtToken" type="tns:InfoAbtToken" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Информация о токене</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="response" type="tns:ResponseMessage">
+		<xs:annotation>
+			<xs:documentation>Ответ с данными справки</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="BaseResponseMessage">
+		<xs:annotation>
+			<xs:documentation>Формат служебных данных ответа</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="requestNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Номер запроса на портале</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="declarantId" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ИИН/БИН заявителя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requestDate" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата запроса, в системе иницировавшей запрос</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requestSystemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор системы запросившей услугу через ПЭП</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status" type="tns:StatusType">
+				<xs:annotation>
+					<xs:documentation>Статус ответа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResponseMessage">
+		<xs:annotation>
+			<xs:documentation>Формат бизнес данных ответа</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BaseResponseMessage">
+				<xs:sequence>
+					<xs:element name="businessData" type="tns:ResponseType" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>бизнес данные ответа</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="RequestorType" type="tns:RequestorType"/>
+	<xs:complexType name="RequestorType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий заявителя ФЛ/ЮЛ</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Person" type="tns:PersonInfoType" minOccurs="0"/>
+			<xs:element name="Organization" type="tns:CompanyInfoType" minOccurs="0"/>
+			<xs:element name="Legal" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResponseType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий бизнес данные ответа</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReportNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Номер справки. Дата определяется по дате сообщения</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Organization" type="tns:OrganizationType">
+				<xs:annotation>
+					<xs:documentation>Сведения об организации для выдачи справки</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegisterDeals" type="tns:RegisterDeal" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Сведения о регдействиях</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Requestor" type="tns:RequestorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Заявитель (используется для отображения в выходном документе на ПЭП)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrganizationType">
+		<xs:annotation>
+			<xs:documentation>Основной тип, описывающий сведения об организации</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrgFormCode" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>1-юрлицо
+2-филиал
+3-представительство</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BIN" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>БИН организации</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Полное наименование организации на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Полное наименование организации на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegistrationDepartment" type="tns:DirectoryType">
+				<xs:annotation>
+					<xs:documentation>Орган юстиции, зарегистрировавший организацию</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegistrationDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Дата первичной регистрации</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegistrationLastDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата последней перерегистрации</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationLeader" type="tns:PersonLeaderType">
+				<xs:annotation>
+					<xs:documentation>Руководитель организации</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FoundersUL" type="tns:OrganizationShortType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Участники, учредители - юрлица</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FoundersFL" type="tns:PersonType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Участники, учредители - физлица</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FoundersCount" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Количество участников, учредителей</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivityTypeNameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Виды деятельности на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivityTypeNameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Виды деятельности на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HeaderOrganization" type="tns:OrganizationShortType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Сведения о головной организации филиала или представительства</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LegalAddress" type="tns:AddressType">
+				<xs:annotation>
+					<xs:documentation>Адрес местонахождения</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="countFlFounders" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Количество учредителей фл</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="countUlFounders" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Количество учредителей юл</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonLeaderType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий руководителя</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FIO" type="tns:FIOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ФИО</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PositionInfo" type="tns:PositionInfoType"/>
+			<xs:element name="IIN" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИИН </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FIOType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий ФИО</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SurName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Фамилия</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Имя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MiddleName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Отчество</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий учредителя физлицо</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FIO" type="tns:FIOType">
+				<xs:annotation>
+					<xs:documentation>ФИО</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IIN" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonInfoType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий заявителя ФЛ</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IIN" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ИИН</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SurName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Фамилия</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Имя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MiddleName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Отчество</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompanyInfoType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий заявителя ЮЛ</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BIN" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>БИН</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование организации на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNameKz" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Наименование организации на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PositionInfoType">
+		<xs:annotation>
+			<xs:documentation>Тип описывающий сведения о должности</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="NameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование должности на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование должности на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AppointmentDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата назначения на должность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AddInfoRu" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Сведения об отстранении от должности или утрате силы назначения управляющего на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AddInfoKz" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Сведения об отстранении от должности или утрате силы назначения управляющего на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RegisterDeal">
+		<xs:annotation>
+			<xs:documentation>Сведения о регистрационных действиях</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RegisterDealTypeId" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Код регдействия</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegisterDealTypeNameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Название регдейстаһвия на русском</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegisterDealTypeNameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Название регдействия на государственном</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegisterDealTypeDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Дата регдействия</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NoticeRu" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Комментарий к регдействию  на русском(вывести в скобках после названия регдействия)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NoticeKz" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Комментарий к регдействию  на государственном (вывести в скобках после названия регдействия)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrganizationShortType">
+		<xs:annotation>
+			<xs:documentation>Основной тип, описывающий учредителя-юрлицо, головную организацию</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrganizationNameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование организации на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование организации на государственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BIN" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>БИН </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressType">
+		<xs:annotation>
+			<xs:documentation>Тип, описывающий сведения об адресе</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RKA" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>код адресного ресурса</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>адрес на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>адрес нагосударственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DirectoryType">
+		<xs:annotation>
+			<xs:documentation>Тип, описывающий данные справочника</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string"/>
+			<xs:element name="NameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>название на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>название нагосударственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StatusType">
+		<xs:annotation>
+			<xs:documentation>Тип, описывающий данные о статусе</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>код</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameRu" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>значение на русском языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NameKz" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>значение нагосударственном языке</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TokenInfo">
+		<xs:annotation>
+			<xs:documentation>Информация о токене</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Токен безопасности</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PublicKey" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Публичный ключ, необходимый для проверки валидности токена безопасности</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InfoAbtToken">
+		<xs:annotation>
+			<xs:documentation>Информация о токене и учредителях</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="tokens" type="tns:TokenInfo" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Токены</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
