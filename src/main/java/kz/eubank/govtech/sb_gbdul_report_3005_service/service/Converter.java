@@ -153,16 +153,8 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
             Marshaller marshaller = this.getRequestMarshaller();
             marshaller.marshal(jaxbElement, document);
             Element rootElement = document.getDocumentElement();
-            rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-//            Element rootElement = document.getDocumentElement();
-//            if (!"request".equals(rootElement.getLocalName())) {
-//                Element requestElement = document.createElementNS(
-//                    "http://3005_kdp.reports.egp.gbdul.tamur.kz", "request"
-//                );
-//                requestElement.appendChild(rootElement);
-//                document.appendChild(requestElement);
-//            }
-
+            rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+                "xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
             return document;
         } catch (JAXBException e) {
             throw new DetailedException(HttpStatus.INTERNAL_SERVER_ERROR, "Error marshalling request");

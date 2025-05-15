@@ -11,13 +11,16 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.xml.transform.TransformerHelper;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
-import javax.xml.transform.Source;
+import javax.xml.XMLConstants;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 import java.util.stream.IntStream;
 
 @Component
@@ -25,64 +28,88 @@ import java.util.stream.IntStream;
 @Order(25000)
 @Slf4j
 public class PayloadPrefixInterceptor extends TransformerHelper implements IShepClientInterceptor {
-    public static final String NAMESPACE = "";
-    public static final String XMLNS = "xmlns";
-
+    private static final String XMLNS_PREFIX = "xmlns:";
 
     @SneakyThrows
     @Override
     public boolean handleRequest(final MessageContext messageContext) throws WebServiceClientException {
-        WebServiceMessage request = messageContext.getRequest();
-        Source payloadSource = request.getPayloadSource();
-        DOMResult result = new DOMResult();
-        transform(payloadSource, result);
-        removePrefix(result.getNode());
-        transform(new DOMSource(result.getNode()), request.getPayloadResult());
-        return true;
+        try {
+            WebServiceMessage request = messageContext.getRequest();
+            Source payloadSource = request.getPayloadSource();
+            DOMResult result = new DOMResult();
+
+            transform(payloadSource, result);
+            Document document = (Document) result.getNode();
+            document.normalizeDocument();
+
+            cleanNamespaces(document.getDocumentElement(), false);
+
+            String xmlString = serializeDocument(document);
+
+            Transformer transformer = getCleanTransformer();
+            transformer.transform(new StreamSource(new StringReader(xmlString)), request.getPayloadResult());
+
+            return true;
+        } catch (Exception e) {
+            log.error("Ошибка при обработке SOAP-запроса", e);
+            return false;
+        }
     }
 
-    private void removePrefix(Node node) {
-        if (node == null) {
-            return;
-        }
-
+    private void cleanNamespaces(Node node, boolean isInsideData) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
-            removeNamespaceDeclaration(node);
-        }
-        NodeList childNodes = node.getChildNodes();
-        if (childNodes != null) {
-            IntStream.of(0, childNodes.getLength()).forEach(index -> removePrefix(childNodes.item(index)));
-        }
-        Node nextSibling = node.getNextSibling();
-        if (nextSibling != null) {
-            removePrefix(nextSibling);
-        }
-    }
+            Element element = (Element) node;
+            boolean currentIsInsideData = isInsideData || "data".equals(element.getLocalName());
 
-    private void removeNamespaceDeclaration(Node node) {
-        NamedNodeMap attributes = node.getAttributes();
-        IntStream.range(0, attributes.getLength()).forEach(index -> {
-            Node attribute = attributes.item(index);
-            if (attribute != null && StringUtils.startsWith(attribute.getNodeName(), XMLNS) &&
-                StringUtils.equals(attribute.getNodeValue(), NAMESPACE)) {
-                attributes.removeNamedItemNS(attribute.getNamespaceURI(), attribute.getLocalName());
+            NamedNodeMap attributes = element.getAttributes();
+            for (int i = attributes.getLength() - 1; i >= 0; i--) {
+                Node attr = attributes.item(i);
+                if (attr != null && attr.getNodeName().startsWith(XMLNS_PREFIX) && !currentIsInsideData) {
+                    attributes.removeNamedItem(attr.getNodeName());
+                }
             }
-        });
+
+            NodeList children = element.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                cleanNamespaces(children.item(i), isInsideData);
+            }
+        }
+    }
+    private String serializeDocument(Document document) throws Exception {
+        DOMImplementationLS domImpl = (DOMImplementationLS) document.getImplementation().getFeature("LS", "3.0");
+        LSSerializer serializer = domImpl.createLSSerializer();
+        serializer.getDomConfig().setParameter("format-pretty-print", false);
+        serializer.getDomConfig().setParameter("xml-declaration", false);
+        return serializer.writeToString(document);
+    }
+
+    private Transformer getCleanTransformer() throws TransformerConfigurationException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        Transformer transformer = transformerFactory.newTransformer();
+
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+
+        return transformer;
     }
 
     @Override
-    public boolean handleResponse(final MessageContext messageContext) throws WebServiceClientException {
+    public boolean handleResponse(final MessageContext messageContext) {
         return true;
     }
 
     @Override
-    public boolean handleFault(final MessageContext messageContext) throws WebServiceClientException {
+    public boolean handleFault(final MessageContext messageContext) {
         return true;
     }
 
     @Override
-    public void afterCompletion(final MessageContext messageContext, final Exception e)
-        throws WebServiceClientException {
-
+    public void afterCompletion(final MessageContext messageContext, final Exception e) {
+        if (e != null) {
+            log.error("Ошибка в обработке SOAP-сообщения", e);
+        }
     }
 }
