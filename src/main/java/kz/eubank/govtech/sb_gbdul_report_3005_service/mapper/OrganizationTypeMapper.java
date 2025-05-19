@@ -5,12 +5,13 @@ import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.Org
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring"
-    , uses = {DirectoryTypeMapper.class
-    , PersonLeaderTypeMapper.class
-    , OrganizationShortTypeMapper.class
-    , PersonTypeMapper.class
-    , AddressTypeMapper.class})
+@Mapper(componentModel = "spring", uses = {
+    DirectoryTypeMapper.class,
+    PersonLeaderTypeMapper.class,
+    OrganizationShortTypeMapper.class,
+    PersonTypeMapper.class,
+    AddressTypeMapper.class
+})
 public interface OrganizationTypeMapper {
     @Mapping(source = "BIN", target = "bin")
     @Mapping(source = "registrationDepartment", target = "registrationDepartment")

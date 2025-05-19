@@ -31,7 +31,6 @@ import javax.xml.bind.*;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -45,7 +44,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMessage, ResponseDTO> {
     private final AppConfigurator configurator;
-
     private final RequestMapper requestMapper;
     private final ResponseMapper responseMapper;
 
@@ -74,12 +72,8 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
         try {
             Element targetElement = (Element) element.getFirstChild();
             if (this.getSignKeyInfo() != null){
-                Element signedElement = SignatureUtils.signXmlElement(targetElement, this.getSignKeyInfo());
-            } else {
-                return element;
+                SignatureUtils.signXmlElement(targetElement, this.getSignKeyInfo());
             }
-
-
             return element;
         } catch (SignatureException var3) {
             throw new DetailedException(HttpStatus.INTERNAL_SERVER_ERROR, "Error signing request data");
@@ -123,9 +117,6 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
         }
         Element dataElement = document.createElement("data");
         dataElement.appendChild(rootElement);
-
-//        this.changeRootElementAttribute(dataElement, this.getRequestQName().getLocalPart(), this.getRequestQName().getNamespaceURI());
-
         return dataElement;
     }
 
@@ -169,10 +160,8 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
 
     public ResponseDTO processCreateResponse(DataResponse dataResponse) {
         if (dataResponse == null || dataResponse.getData() == null) return null;
-
         Element dataElement = dataResponse.getData();
         Optional<Element> firstElementOpt = findFirstElement(dataElement);
-
         if (firstElementOpt.isPresent()) {
             ResponseMessage parsed = extractResponseFromElement(firstElementOpt.get());
             return convertToApiResponse(parsed);
@@ -183,7 +172,6 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
                 return convertToApiResponse(parsed);
             }
         }
-
         return createResponse(dataResponse);
     }
 
@@ -191,7 +179,6 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
     private Optional<Element> findFirstElement(Element dataElement) {
         NodeList children = dataElement.getChildNodes();
         Element firstElement = null;
-
         for (int i = 0; i < children.getLength(); i++) {
             if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 if (firstElement != null) {
@@ -210,15 +197,11 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
             StringWriter writer = new StringWriter();
             transformer.transform(new DOMSource(element), new StreamResult(writer));
             String responseXml = writer.toString();
-
-            JAXBContext jaxbContext = JAXBContext.newInstance("kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse");
+            JAXBContext jaxbContext = createJaxbContext(ResponseMessage.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
             JAXBElement<ResponseMessage> jaxbElement = (JAXBElement<ResponseMessage>)
                 unmarshaller.unmarshal(new StringReader(responseXml));
-
             return jaxbElement.getValue();
-
         } catch (Exception e) {
             log.error("Ошибка при разборе XML: ", e);
         }
@@ -238,17 +221,18 @@ public class Converter extends AConverter<RequestDTO, RequestMessage, ResponseMe
 
     private ResponseMessage unmarshalFromXmlString(String xml) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance("kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse");
+            JAXBContext jaxbContext = createJaxbContext(ResponseMessage.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
             JAXBElement<ResponseMessage> jaxbElement = (JAXBElement<ResponseMessage>)
                 unmarshaller.unmarshal(new StringReader(xml));
-
             return jaxbElement.getValue();
-
         } catch (Exception e) {
             log.error("Ошибка при разборе текстовой XML-строки: ", e);
             return null;
         }
+    }
+
+    private JAXBContext createJaxbContext(Class<?> clazz) throws JAXBException {
+        return JAXBContext.newInstance(clazz.getPackage().getName());
     }
 }

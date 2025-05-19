@@ -4,7 +4,6 @@ import kz.eubank.govtech.sb_gbdul_report_3005_service.dto.request.BaseRequestMes
 import kz.eubank.govtech.sb_gbdul_report_3005_service.dto.request.RequestTypeDTO;
 import lombok.Data;
 
-import java.io.Serializable;
 
 @Data
 public class RequestDTO extends BaseRequestMessageDTO {

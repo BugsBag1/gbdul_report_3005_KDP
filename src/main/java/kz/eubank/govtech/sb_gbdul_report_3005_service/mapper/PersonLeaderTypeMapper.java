@@ -5,9 +5,7 @@ import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.Per
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring"
-    , uses = {FIOTypeMapper.class
-    , PositionInfoTypeMapper.class})
+@Mapper(componentModel = "spring", uses = {FIOTypeMapper.class, PositionInfoTypeMapper.class})
 public interface PersonLeaderTypeMapper {
     @Mapping(source = "FIO", target = "fio")
     @Mapping(source = "positionInfo", target = "positionInfo")

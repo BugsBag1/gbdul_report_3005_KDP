@@ -17,7 +17,7 @@ configmap:
   configmapdata:
     SHEP_IS_IGNORE_WSS: "true"
     SHEP_IS_WSS_USING: "true"
-    SHEP_SERVICE_ID: "GbdulAffilFace_KDP"
+    SHEP_SERVICE_ID: "GbdulReport3005_KDP"
     SHEP_SIGN_KEY_PATH: "/app/cert/gost.p12"
     SHEP_URL: "https://vshep-t.egov.kz/bip-sync-wss-gost/"
     MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"

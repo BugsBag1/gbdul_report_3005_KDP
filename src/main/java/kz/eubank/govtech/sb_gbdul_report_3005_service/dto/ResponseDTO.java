@@ -7,6 +7,6 @@ import lombok.Data;
 
 @Data
 public class ResponseDTO extends BaseResponseMessageDTO {
-    @Schema(description = "бизнес данные ответа")
+    @Schema(description = "Бизнес данные ответа")
     private ResponseTypeDTO businessData;
 }

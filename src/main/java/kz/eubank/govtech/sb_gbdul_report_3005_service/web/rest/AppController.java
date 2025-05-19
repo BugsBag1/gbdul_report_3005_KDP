@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 public class AppController {
     private final AppService appService;
 
-    @Operation(summary = "Сервис предназначен для получения справки по услуге Справка о всех регистрационных действиях ЮЛ")
+    @Operation(summary = "Сервис получения справки по услуге «Справка о всех регистрационных действиях ЮЛ» с КДП")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successful operation"),
         @ApiResponse(
@@ -67,15 +67,13 @@ public class AppController {
     @GetMapping
     public ResponseDTO getReport3005(
         @Parameter(description = "БИН организации, для которой запрашивается справка") @Size(min = 12, max = 12)
-        @RequestParam String bin
+        @RequestParam String bin,
+        @Parameter(description = "ИИН физического лица (необязательный параметр)", required = false)
+        @Size(min = 12, max = 12)
+        @RequestParam(required = false) String iin,
+        @Parameter(hidden = true) @RequestHeader("Authorization") final String serviceToken
     ) {
-//        System.out.println("service token = " + serviceToken);
-//        var claimsData = JwtKeyCloakTokenUtils.parseJwtKeyCloakToken(serviceToken);
-//        System.out.println("claimsData = " + claimsData);
-//        System.out.println("ClientId = " + claimsData.getClientId());
-//        System.out.println("Department = " + claimsData.getDepartmentName());
-
-//        return appService.getReport3005(bin, claimsData.getClientId(), claimsData.getDepartmentName());
-        return appService.getReport3005(bin, "test", "test");
+        var claimsData = JwtKeyCloakTokenUtils.parseJwtKeyCloakToken(serviceToken);
+        return appService.getReport3005(bin, iin, claimsData.getClientId(), claimsData.getDepartmentName());
     }
 }

@@ -5,10 +5,11 @@ import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.Res
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring"
-    , uses = {OrganizationTypeMapper.class
-    , RegisterDealMapper.class
-    , RequestMapper.class})
+@Mapper(componentModel = "spring", uses = {
+    OrganizationTypeMapper.class,
+    RegisterDealMapper.class,
+    RequestMapper.class
+})
 public interface ResponseTypeMapper {
     @Mapping(source = "organization", target = "organization")
     @Mapping(source = "registerDeals", target = "registerDeals")

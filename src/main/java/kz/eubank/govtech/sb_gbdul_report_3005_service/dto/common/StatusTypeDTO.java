@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class StatusTypeDTO {
-    @Schema(description = "код")
+    @Schema(description = "Код")
     private String code;
-    @Schema(description = "значение на русском языке")
+    @Schema(description = "Значение на русском языке")
     private String nameRu;
-    @Schema(description = "значение нагосударственном языке")
+    @Schema(description = "Значение на государственном языке")
     private String nameKz;
 }

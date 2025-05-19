@@ -13,8 +13,6 @@ import kz.eubank.govtech.sb_gbdul_report_3005_service.dto.common.TokenInfoDTO;
 import kz.eubank.govtech.sb_gbdul_report_3005_service.dto.request.RequestTypeDTO;
 import kz.eubank.govtech.sb_gbdul_report_3005_service.errors.Errors;
 import kz.eubank.govtech.sb_gbdul_report_3005_service.errors.RemoteError;
-import kz.eubank.govtech.sb_gbdul_report_3005_service.utils.XmlDateUtils;
-import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.RequestType;
 import kz.govtech.m11s.syncshepclient.dto.DataResponse;
 import kz.govtech.m11s.syncshepclient.web.ws.client.SyncShepClient;
 import kz.govtech.m11s.validation.errors.BadRequestException;
@@ -25,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,25 +42,24 @@ public class AppService {
 
     public ResponseDTO getReport3005(
         String bin,
+        String iin,
         String requestorClientId,
         String requestorDepartmentName
     ){
         String requestorBin = appConstants.getRequestorBin();
         String requsetSystemId = appConstants.getRequestSystemId();
-//        final KdpToken kdpToken;
-//        try {
-//            kdpToken = kdpServiceClient.getKdpToken(SERVICE_ID, requestorBin, requestorClientId, requestorDepartmentName);
-//        } catch (KdpServiceError.KdpNotFoundError e) {
-//            throw new BadRequestException("KDP token not found", Errors.KDP_TOKEN_NOT_FOUND);
-//        }
+        final KdpToken kdpToken;
+        try {
+            kdpToken = kdpServiceClient.getKdpToken(SERVICE_ID, iin, requestorClientId, requestorDepartmentName);
+        } catch (KdpServiceError.KdpNotFoundError e) {
+            throw new BadRequestException("KDP token not found", Errors.KDP_TOKEN_NOT_FOUND);
+        }
 
         InfoAbtTokenDTO infoAbtTokenDTO = new InfoAbtTokenDTO();
         TokenInfoDTO tokenInfoDTO = new TokenInfoDTO();
         List<TokenInfoDTO> tokenInfoDTOList = new ArrayList<>();
-//        tokenInfoDTO.setCode(kdpToken.getToken());
-//        tokenInfoDTO.setPublicKey(kdpToken.getPublicKey());
-        tokenInfoDTO.setCode("test");
-        tokenInfoDTO.setPublicKey("test");
+        tokenInfoDTO.setCode(kdpToken.getToken());
+        tokenInfoDTO.setPublicKey(kdpToken.getPublicKey());
         tokenInfoDTOList.add(tokenInfoDTO);
         infoAbtTokenDTO.setTokens(tokenInfoDTOList);
 
@@ -82,7 +78,7 @@ public class AppService {
         request.setRequestNumber(UUID.randomUUID().toString());
         request.setDeclarantId(requestorBin);
         request.setRequestDate(LocalDateTime.now());
-        request.setRequestSystemId(appConstants.getRequestSystemId());
+        request.setRequestSystemId(requsetSystemId);
 
         request.setBusinessData(requestTypeDTO);
 

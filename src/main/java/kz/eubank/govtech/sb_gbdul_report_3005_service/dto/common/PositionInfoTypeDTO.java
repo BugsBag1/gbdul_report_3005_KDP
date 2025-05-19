@@ -11,7 +11,7 @@ public class PositionInfoTypeDTO {
     private String nameRu;
     @Schema(description = "Наименование должности на государственном языке")
     private String nameKz;
-    @Schema(description = "AppointmentDate")
+    @Schema(description = "Дата назначения")
     private LocalDate appointmentDate;
     @Schema(description = "Сведения об отстранении от должности или утрате силы назначения управляющего на русском языке")
     private String addInfoRu;

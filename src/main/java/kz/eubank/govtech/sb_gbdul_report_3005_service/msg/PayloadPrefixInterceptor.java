@@ -4,7 +4,6 @@ import kz.govtech.m11s.syncshepclient.web.ws.client.interceptor.IShepClientInter
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.WebServiceMessage;
@@ -18,10 +17,8 @@ import org.w3c.dom.ls.LSSerializer;
 import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
-import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor

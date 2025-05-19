@@ -1,7 +1,6 @@
 package kz.eubank.govtech.sb_gbdul_report_3005_service.mapper;
 
 import kz.eubank.govtech.sb_gbdul_report_3005_service.dto.common.RequestorDTO;
-import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.RequestType;
 import kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse.RequestorType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

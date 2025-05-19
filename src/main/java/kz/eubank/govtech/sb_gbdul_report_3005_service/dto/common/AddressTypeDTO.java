@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class AddressTypeDTO {
-    @Schema(description = "код адресного ресурса")
+    @Schema(description = "Код адресного ресурса")
     private String rka;
-    @Schema(description = "адрес на русском языке")
+    @Schema(description = "Адрес на русском языке")
     private String nameRu;
-    @Schema(description = "адрес нагосударственном языке")
+    @Schema(description = "Адрес на государственном языке")
     private String nameKz;
 }

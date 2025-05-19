@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class DirectoryTypeDTO {
-    @Schema(description = "код")
+    @Schema(description = "Код")
     private String code;
-    @Schema(description = "название на русском языке")
+    @Schema(description = "Название на русском языке")
     private String nameRu;
-    @Schema(description = "название нагосударственном языке")
+    @Schema(description = "Название на государственном языке")
     private String nameKz;
 }
