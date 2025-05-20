@@ -8,7 +8,7 @@
         <version>2.7.18</version>
 		<relativePath/>
 	</parent>
-	<groupId>kz.eubank.govtech</groupId>
+	<groupId>kz.govtech.m11s</groupId>
 	<artifactId>sb-gbdul-report-3005-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sb-gbdul-report-3005-service</name>
@@ -266,7 +266,7 @@
                             <encoding>UTF-8</encoding>
                             <locale>ru</locale>
                             <clearOutputDir>false</clearOutputDir>
-                            <packageName>kz.eubank.govtech.sb_gbdul_report_3005_service.xsd.RequestAndResponse</packageName>
+                            <packageName>kz.govtech.m11s.sb_gbdul_report_3005_service.xsd.RequestAndResponse</packageName>
                         </configuration>
                     </execution>
                 </executions>
